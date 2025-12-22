@@ -25,6 +25,7 @@ import { Flux2FlexEditModel } from './models/flux2FlexEdit/Flux2FlexEdit.model';
 import { GptImage15Model } from './models/gptImage15/GptImage15.model';
 import { KlingV26ProI2VModel } from './models/klingV26ProI2V/KlingV26ProI2V.model';
 import { KlingV26ProModel } from './models/klingV26Pro/KlingV26Pro.model';
+import { KlingV1StandardI2VModel } from './models/klingV1StandardI2V/KlingV1StandardI2V.model';
 import { KlingCreateVoiceModel } from './models/klingCreateVoice/KlingCreateVoice.model';
 import { TextToDialogueModel } from './models/textToDialogue/TextToDialogue.model';
 import { ElevenLabsAudioIsolationModel } from './models/elevenlabsAudioIsolation/ElevenLabsAudioIsolation.model';
@@ -78,6 +79,7 @@ import { Veo31FastFirstLastFrameToVideoModel } from './models/veo31FastFirstLast
 import { Veo31I2VModel } from './models/veo31I2V/Veo31I2V.model';
 import { Veo31FirstLastFrameToVideoModel } from './models/veo31FirstLastFrameToVideo/Veo31FirstLastFrameToVideo.model';
 import { Veo31Model } from './models/veo31/Veo31.model';
+import { HunyuanVideo15I2VModel } from './models/hunyuanVideo15I2V/HunyuanVideo15I2V.model';
 
 export type FalModelConstructor = new (
 	executeFunctions: IExecuteFunctions,
@@ -110,6 +112,7 @@ export const FAL_MODEL_REGISTRY: Record<string, FalModelConstructor> = {
 	gptImage15: GptImage15Model as FalModelConstructor,
 	klingV26ProI2V: KlingV26ProI2VModel as FalModelConstructor,
 	klingV26Pro: KlingV26ProModel as FalModelConstructor,
+	klingV1StandardI2V: KlingV1StandardI2VModel as FalModelConstructor,
 	klingCreateVoice: KlingCreateVoiceModel as FalModelConstructor,
 	textToDialogue: TextToDialogueModel as FalModelConstructor,
 	elevenlabsTtsMultilingualV2: ElevenlabsTtsMultilingualV2Model as FalModelConstructor,
@@ -163,6 +166,7 @@ export const FAL_MODEL_REGISTRY: Record<string, FalModelConstructor> = {
 	veo31I2V: Veo31I2VModel as FalModelConstructor,
 	veo31FirstLastFrameToVideo: Veo31FirstLastFrameToVideoModel as FalModelConstructor,
 	veo31: Veo31Model as FalModelConstructor,
+	hunyuanVideo15I2V: HunyuanVideo15I2VModel as FalModelConstructor,
 };
 
 // 模型显示名称映射
@@ -192,6 +196,7 @@ const FAL_MODEL_DISPLAY_NAMES: Record<string, string> = {
 	gptImage15: 'GPT Image 1.5 (Edit)',
 	klingV26ProI2V: 'Kling V2.6 Pro Image-to-Video',
 	klingV26Pro: 'Kling V2.6 Pro (Text-to-Video)',
+	klingV1StandardI2V: 'Kling Video O1 Standard (Image-to-Video)',
 	klingCreateVoice: 'Kling Create Voice',
 	textToDialogue: 'ElevenLabs Text To Dialogue',
 	elevenlabsTtsMultilingualV2: 'ElevenLabs Multilingual v2',
@@ -244,6 +249,7 @@ const FAL_MODEL_DISPLAY_NAMES: Record<string, string> = {
 	veo31I2V: 'Veo 3.1 Image-to-Video',
 	veo31FirstLastFrameToVideo: 'Veo 3.1 First-Last-Frame-to-Video',
 	veo31: 'Veo 3.1',
+	hunyuanVideo15I2V: 'Hunyuan Video 1.5 Image-to-Video',
 };
 
 export function getFalModelOptions(): Array<{ name: string; value: string }> {

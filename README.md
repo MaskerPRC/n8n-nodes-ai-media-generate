@@ -6,6 +6,7 @@ n8n community node for generating AI media content using the FAL platform. This 
 
 - **Multiple AI Models**: Support for various FAL AI models
   - WAN 2.6 Image-to-Video: Generate videos from images
+  - Hunyuan Video 1.5 Image-to-Video: Generate videos from images using Hunyuan Video model
   - Gemini 3 Pro Image (Edit): Edit images using AI
   - Gemini 3 Pro Image (Text-to-Image): Generate images from text prompts
 
@@ -40,6 +41,17 @@ Generate videos from images with motion based on text prompts.
 - Duration: 5, 10, or 15 seconds
 - Multi-shot support with intelligent scene segmentation
 - Audio support for background music
+
+### Hunyuan Video 1.5 Image-to-Video
+Generate videos from images using the Hunyuan Video model.
+
+**Features:**
+- Resolution: 480p
+- Aspect ratios: 16:9, 9:16
+- Configurable number of frames (default: 121)
+- Configurable inference steps (default: 28)
+- Prompt expansion support
+- Negative prompt support
 
 ### Gemini 3 Pro Image (Edit)
 Edit images using AI with text prompts.

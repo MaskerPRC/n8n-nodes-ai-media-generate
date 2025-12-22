@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.36] - 2025-01-XX
+
+### Added
+- Added new FAL model: Hunyuan Video 1.5 Image-to-Video (`hunyuanVideo15I2V`) - Generate videos from images using Hunyuan Video model
+  - Support for 480p resolution
+  - Aspect ratios: 16:9, 9:16
+  - Configurable number of frames (default: 121)
+  - Configurable inference steps (default: 28)
+  - Prompt expansion support
+  - Negative prompt support
+
 ## [0.1.34] - 2025-01-XX
 
 ### Changed
