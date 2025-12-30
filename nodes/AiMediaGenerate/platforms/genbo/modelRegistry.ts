@@ -8,6 +8,7 @@ import { Wan22I2VModel } from './models/wan22I2V/Wan22I2V.model';
 import { Wan22T2VModel } from './models/wan22T2V/Wan22T2V.model';
 import { InfiniteTalkModel } from './models/infiniteTalk/InfiniteTalk.model';
 import { InfiniteTalkVideoModel } from './models/infiniteTalkVideo/InfiniteTalkVideo.model';
+import { InfiniteTalkMultiModel } from './models/infiniteTalkMulti/InfiniteTalkMulti.model';
 import { SteadyDancerModel } from './models/steadyDancer/SteadyDancer.model';
 import { Wan22I2VTurboModel } from './models/wan22I2VTurbo/Wan22I2VTurbo.model';
 import { Wan22AnimateMoveModel } from './models/wan22AnimateMove/Wan22AnimateMove.model';
@@ -37,6 +38,7 @@ export const GENBO_MODEL_REGISTRY: Record<string, GenboModelConstructor> = {
 	steadyDancer: SteadyDancerModel as GenboModelConstructor,
 	infiniteTalk: InfiniteTalkModel as GenboModelConstructor,
 	infiniteTalkVideo: InfiniteTalkVideoModel as GenboModelConstructor,
+	infiniteTalkMulti: InfiniteTalkMultiModel as GenboModelConstructor,
 	indexTTS2Single: IndexTTS2SingleModel as GenboModelConstructor,
 	indexTTS2Multi: IndexTTS2MultiModel as GenboModelConstructor,
 	soulXPodcastSingle: SoulXPodcastSingleModel as GenboModelConstructor,
@@ -58,6 +60,7 @@ const GENBO_MODEL_DISPLAY_NAMES: Record<string, string> = {
 	steadyDancer: 'SteadyDancer',
 	infiniteTalk: 'InfiniteTalk',
 	infiniteTalkVideo: 'InfiniteTalk-video',
+	infiniteTalkMulti: 'InfiniteTalk Multi',
 	indexTTS2Single: 'IndexTTS2 Single',
 	indexTTS2Multi: 'IndexTTS2 Multi',
 	soulXPodcastSingle: 'SoulX-Podcast-Single',
