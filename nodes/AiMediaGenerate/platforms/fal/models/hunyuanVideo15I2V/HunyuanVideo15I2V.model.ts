@@ -25,7 +25,7 @@ export class HunyuanVideo15I2VModel extends BaseFalModel {
 				},
 				default: '',
 				required: true,
-				description: 'The prompt to generate the video from.',
+				description: 'The prompt to generate the video from',
 			},
 			{
 				displayName: 'Image URL',
@@ -44,14 +44,14 @@ export class HunyuanVideo15I2VModel extends BaseFalModel {
 					rows: 2,
 				},
 				default: '',
-				description: 'The negative prompt to guide what not to generate.',
+				description: 'The negative prompt to guide what not to generate',
 			},
 			{
 				displayName: 'Number of Inference Steps',
 				name: 'num_inference_steps',
 				type: 'number',
 				default: 28,
-				description: 'The number of inference steps.',
+
 			},
 			{
 				displayName: 'Seed',
@@ -75,7 +75,7 @@ export class HunyuanVideo15I2VModel extends BaseFalModel {
 					},
 				],
 				default: '16:9',
-				description: 'The aspect ratio of the video.',
+				description: 'The aspect ratio of the video',
 			},
 			{
 				displayName: 'Resolution',
@@ -88,21 +88,21 @@ export class HunyuanVideo15I2VModel extends BaseFalModel {
 					},
 				],
 				default: '480p',
-				description: 'The resolution of the video.',
+				description: 'The resolution of the video',
 			},
 			{
 				displayName: 'Number of Frames',
 				name: 'num_frames',
 				type: 'number',
 				default: 121,
-				description: 'The number of frames to generate.',
+				description: 'The number of frames to generate',
 			},
 			{
 				displayName: 'Enable Prompt Expansion',
 				name: 'enable_prompt_expansion',
 				type: 'boolean',
 				default: true,
-				description: 'Enable prompt expansion to enhance the input prompt.',
+				description: 'Whether to enable prompt expansion to enhance the input prompt',
 			},
 		];
 	}

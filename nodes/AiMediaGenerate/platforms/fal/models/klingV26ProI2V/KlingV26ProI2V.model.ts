@@ -144,3 +144,4 @@ export class KlingV26ProI2VModel extends BaseFalModel {
 	}
 }
 
+

@@ -381,3 +381,4 @@ export class Wan22I2VModel extends BaseGenboModel {
 	}
 }
 
+

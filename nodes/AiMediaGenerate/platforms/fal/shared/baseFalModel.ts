@@ -20,6 +20,7 @@ export abstract class BaseFalModel extends BaseModel {
 	/**
 	 * 获取状态查询的基础路径
 	 * 对于某些模型，需要从 endpoint 中提取基础路径
+	 * - elevenlabs: 所有模型统一使用 /fal-ai/elevenlabs（Queue API 为 /fal-ai/elevenlabs/requests/{id}/status）
 	 * - kling-video: /fal-ai/kling-video/o1/standard/image-to-video -> /fal-ai/kling-video
 	 * - wan: /wan/v2.6/text-to-video -> /wan/v2.6
 	 * - z-image: /fal-ai/z-image/turbo -> /fal-ai/z-image
@@ -27,6 +28,10 @@ export abstract class BaseFalModel extends BaseModel {
 	 * - seedream: /fal-ai/bytedance/seedream/v4.5/text-to-image -> /fal-ai/bytedance
 	 */
 	protected getStatusBasePath(endpoint: string): string {
+		// 检查是否是 elevenlabs 相关模型（Queue API 统一使用 /fal-ai/elevenlabs/requests/{id}/status）
+		if (endpoint.includes('/fal-ai/elevenlabs')) {
+			return '/fal-ai/elevenlabs';
+		}
 		// 检查是否是 kling-video 相关模型
 		if (endpoint.includes('/kling-video/')) {
 			// 提取基础路径：/fal-ai/kling-video
@@ -223,14 +228,17 @@ export abstract class BaseFalModel extends BaseModel {
 				statusResponse = await this.makeRequest('GET', statusUrl);
 			} catch (error: unknown) {
 				// 如果状态查询失败（如 405），尝试直接查询结果端点
-				const err = error as { response?: { statusCode?: number } };
-				if (err.response?.statusCode === 405) {
+				const err = error as { response?: { statusCode?: number }; message?: string };
+				const statusCode = err.response?.statusCode;
+				
+				// 检查是否是 405 错误（方法不允许）
+				if (statusCode === 405) {
 					// 405 表示方法不允许，可能状态端点不支持 GET，尝试直接获取结果
 					try {
 						const resultUrl = `${this.getAsyncBaseUrl()}${statusBasePath}/requests/${requestId}`;
 						const resultResponse = await this.makeRequest('GET', resultUrl);
-						// 如果能够获取结果，说明任务已完成
-						if (resultResponse.video || resultResponse.images || (resultResponse as IDataObject).output) {
+						// 如果能够获取结果，说明任务已完成（含 video/images/output/audio，如 ElevenLabs 返回 audio）
+						if (resultResponse.video || resultResponse.images || resultResponse.audio || (resultResponse as IDataObject).output) {
 							return {
 								json: this.processAsyncResponse(resultResponse as AsyncResultResponse),
 								pairedItem: { item: this.itemIndex },
@@ -238,9 +246,20 @@ export abstract class BaseFalModel extends BaseModel {
 						}
 						// 如果结果中还没有数据，继续等待
 					} catch (resultError: unknown) {
-						// 如果获取结果也失败，继续轮询
-						const resultErr = resultError as { response?: { statusCode?: number } };
-						if (resultErr.response?.statusCode === 404 || resultErr.response?.statusCode === 422) {
+						// 如果获取结果也失败，检查错误类型
+						const resultErr = resultError as { response?: { statusCode?: number }; message?: string };
+						const resultStatusCode = resultErr.response?.statusCode;
+						
+						// 从错误消息中提取状态码（如果 response.statusCode 不可用）
+						let extractedStatusCode = resultStatusCode;
+						if (!extractedStatusCode && resultErr.message) {
+							const statusMatch = resultErr.message.match(/status code (\d+)/i);
+							if (statusMatch) {
+								extractedStatusCode = parseInt(statusMatch[1], 10);
+							}
+						}
+						
+						if (extractedStatusCode === 404 || extractedStatusCode === 422) {
 							// 404 或 422 表示任务可能还在进行中，继续等待
 							const delay = (ms: number) => {
 								const start = Date.now();
@@ -264,6 +283,20 @@ export abstract class BaseFalModel extends BaseModel {
 					delay(pollInterval);
 					continue;
 				}
+				
+				// 检查是否是 422 错误（任务可能还在进行中）
+				if (statusCode === 422) {
+					// 422 表示任务可能还在进行中，继续等待
+					const delay = (ms: number) => {
+						const start = Date.now();
+						while (Date.now() - start < ms) {
+							// Busy wait - acceptable for short polling intervals
+						}
+					};
+					delay(pollInterval);
+					continue;
+				}
+				
 				throw error;
 			}
 
@@ -272,8 +305,8 @@ export abstract class BaseFalModel extends BaseModel {
 				// 先检查状态响应中是否已包含结果数据（如 images 或 video 字段）
 				let resultResponse: IDataObject;
 				
-				// 检查状态响应中是否已包含结果数据
-				if (statusResponse.images || statusResponse.video || (statusResponse as IDataObject).output) {
+				// 检查状态响应中是否已包含结果数据（含 audio，如 ElevenLabs）
+				if (statusResponse.images || statusResponse.video || statusResponse.audio || (statusResponse as IDataObject).output) {
 					// 状态响应中已包含结果数据，直接使用
 					resultResponse = statusResponse as IDataObject;
 				} else {
@@ -283,8 +316,19 @@ export abstract class BaseFalModel extends BaseModel {
 						resultResponse = await this.makeRequest('GET', resultUrl);
 					} catch (error: unknown) {
 						// 如果获取结果失败（422/404），尝试使用状态响应
-						const err = error as { response?: { statusCode?: number; body?: IDataObject } };
-						if (err.response?.statusCode === 422 || err.response?.statusCode === 404) {
+						const err = error as { response?: { statusCode?: number; body?: IDataObject }; message?: string };
+						const statusCode = err.response?.statusCode;
+						
+						// 从错误消息中提取状态码（如果 response.statusCode 不可用）
+						let extractedStatusCode = statusCode;
+						if (!extractedStatusCode && err.message) {
+							const statusMatch = err.message.match(/status code (\d+)/i);
+							if (statusMatch) {
+								extractedStatusCode = parseInt(statusMatch[1], 10);
+							}
+						}
+						
+						if (extractedStatusCode === 422 || extractedStatusCode === 404) {
 							// 422 或 404 可能表示结果已经在状态响应中，或者端点格式不对
 							// 尝试使用状态响应作为结果
 							resultResponse = statusResponse as IDataObject;

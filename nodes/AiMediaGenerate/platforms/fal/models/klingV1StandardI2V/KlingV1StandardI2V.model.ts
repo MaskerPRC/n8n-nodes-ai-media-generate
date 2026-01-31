@@ -61,7 +61,7 @@ export class KlingV1StandardI2VModel extends BaseFalModel {
 					},
 				],
 				default: '5',
-				description: 'Video duration in seconds. Default value: "5"',
+				description: 'Video duration in seconds. Default value: "5".',
 			},
 		];
 	}

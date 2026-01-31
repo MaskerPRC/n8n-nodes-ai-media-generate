@@ -276,3 +276,4 @@ export class InfiniteTalkModel extends BaseGenboModel {
 	}
 }
 
+

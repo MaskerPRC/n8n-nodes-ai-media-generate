@@ -118,3 +118,4 @@ export class Flux2TrainerModel extends BaseFalModel {
 	}
 }
 
+
