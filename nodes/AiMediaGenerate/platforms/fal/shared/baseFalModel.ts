@@ -19,13 +19,10 @@ export abstract class BaseFalModel extends BaseModel {
 
 	/**
 	 * 获取状态查询的基础路径
-	 * 对于某些模型，需要从 endpoint 中提取基础路径
-	 * - elevenlabs: 所有模型统一使用 /fal-ai/elevenlabs（Queue API 为 /fal-ai/elevenlabs/requests/{id}/status）
-	 * - kling-video: /fal-ai/kling-video/o1/standard/image-to-video -> /fal-ai/kling-video
-	 * - wan: /wan/v2.6/text-to-video -> /wan/v2.6
-	 * - z-image: /fal-ai/z-image/turbo -> /fal-ai/z-image
-	 * - nano-banana-pro: /fal-ai/nano-banana-pro/edit -> /fal-ai/nano-banana-pro
-	 * - seedream: /fal-ai/bytedance/seedream/v4.5/text-to-image -> /fal-ai/bytedance
+	 * 提交用完整 endpoint，Queue 状态/结果用服务级 base path（避免 405）
+	 * 已统一处理的：elevenlabs, kling-video, wan, z-image, nano-banana-pro, bytedance,
+	 * minimax, minimax-music, veo3.1, topaz, veed, flux 系列, vidu/q2, sam-3, moondream3-preview,
+	 * hunyuan-video, bria, creatify, nano-banana, gpt-image-1.5, bagel, openrouter, vibevoice, chatterbox
 	 */
 	protected getStatusBasePath(endpoint: string): string {
 		// 检查是否是 elevenlabs 相关模型（Queue API 统一使用 /fal-ai/elevenlabs/requests/{id}/status）
@@ -68,6 +65,100 @@ export abstract class BaseFalModel extends BaseModel {
 			if (match) {
 				return match[1];
 			}
+		}
+		// 检查是否是 minimax-music（需在 minimax 之前，避免被误匹配）
+		if (endpoint.includes('/fal-ai/minimax-music')) {
+			return '/fal-ai/minimax-music';
+		}
+		// 检查是否是 minimax 相关模型（如 voice-design, voice-clone, speech-2.6-hd）
+		// Queue API 统一使用 /fal-ai/minimax/requests/{id}/status
+		if (endpoint.includes('/fal-ai/minimax')) {
+			return '/fal-ai/minimax';
+		}
+		// veo3.1: 各子路径统一用 /fal-ai/veo3.1
+		if (endpoint.includes('/fal-ai/veo3.1')) {
+			return '/fal-ai/veo3.1';
+		}
+		// topaz: /fal-ai/topaz/upscale/... -> /fal-ai/topaz
+		if (endpoint.includes('/fal-ai/topaz')) {
+			return '/fal-ai/topaz';
+		}
+		// veed: /veed/fabric-1.0/fast -> /veed/fabric-1.0，/veed/video-background-removal/fast -> /veed/video-background-removal
+		if (endpoint.startsWith('/veed/')) {
+			const match = endpoint.match(/^(\/veed\/[^/]+)/);
+			if (match) {
+				return match[1];
+			}
+		}
+		// flux 系列: /fal-ai/flux-2/edit -> /fal-ai/flux-2，/fal-ai/flux/dev -> /fal-ai/flux
+		if (endpoint.includes('/fal-ai/flux-2-trainer')) {
+			return '/fal-ai/flux-2-trainer';
+		}
+		if (endpoint.includes('/fal-ai/flux-2-pro')) {
+			return '/fal-ai/flux-2-pro';
+		}
+		if (endpoint.includes('/fal-ai/flux-2-max')) {
+			return '/fal-ai/flux-2-max';
+		}
+		if (endpoint.includes('/fal-ai/flux-2-flex')) {
+			return '/fal-ai/flux-2-flex';
+		}
+		if (endpoint.includes('/fal-ai/flux-2/')) {
+			return '/fal-ai/flux-2';
+		}
+		if (endpoint.includes('/fal-ai/flux/')) {
+			return '/fal-ai/flux';
+		}
+		// vidu q2: /fal-ai/vidu/q2/... -> /fal-ai/vidu/q2
+		if (endpoint.includes('/fal-ai/vidu/q2')) {
+			return '/fal-ai/vidu/q2';
+		}
+		// sam-3: /fal-ai/sam-3/image, /fal-ai/sam-3/video -> /fal-ai/sam-3
+		if (endpoint.includes('/fal-ai/sam-3')) {
+			return '/fal-ai/sam-3';
+		}
+		// moondream3-preview: /fal-ai/moondream3-preview/query -> /fal-ai/moondream3-preview
+		if (endpoint.includes('/fal-ai/moondream3-preview')) {
+			return '/fal-ai/moondream3-preview';
+		}
+		// hunyuan-video: /fal-ai/hunyuan-video-v1.5/image-to-video -> /fal-ai/hunyuan-video-v1.5
+		if (endpoint.includes('/fal-ai/hunyuan-video')) {
+			return '/fal-ai/hunyuan-video-v1.5';
+		}
+		// bria: /bria/bria_video_eraser/erase/... -> /bria/bria_video_eraser
+		if (endpoint.includes('/bria/bria_video_eraser')) {
+			return '/bria/bria_video_eraser';
+		}
+		// creatify: /creatify/lipsync -> /creatify，/fal-ai/creatify/aurora -> /fal-ai/creatify
+		if (endpoint.includes('/fal-ai/creatify')) {
+			return '/fal-ai/creatify';
+		}
+		if (endpoint.startsWith('/creatify/')) {
+			return '/creatify';
+		}
+		// nano-banana（非 pro）: /fal-ai/nano-banana/edit -> /fal-ai/nano-banana
+		if (endpoint.includes('/fal-ai/nano-banana/')) {
+			return '/fal-ai/nano-banana';
+		}
+		// gpt-image: /fal-ai/gpt-image-1.5/edit -> /fal-ai/gpt-image-1.5
+		if (endpoint.includes('/fal-ai/gpt-image')) {
+			return '/fal-ai/gpt-image-1.5';
+		}
+		// bagel: /fal-ai/bagel/understand -> /fal-ai/bagel
+		if (endpoint.includes('/fal-ai/bagel')) {
+			return '/fal-ai/bagel';
+		}
+		// openrouter: /openrouter/router/vision -> /openrouter/router
+		if (endpoint.includes('/openrouter/router')) {
+			return '/openrouter/router';
+		}
+		// vibevoice: /fal-ai/vibevoice/0.5b -> /fal-ai/vibevoice
+		if (endpoint.includes('/fal-ai/vibevoice')) {
+			return '/fal-ai/vibevoice';
+		}
+		// chatterbox: /fal-ai/chatterbox/text-to-speech/turbo -> /fal-ai/chatterbox
+		if (endpoint.includes('/fal-ai/chatterbox')) {
+			return '/fal-ai/chatterbox';
 		}
 		// 对于其他模型，使用完整的 endpoint
 		return endpoint;

@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.43] - 2025-01-31
+
+### Fixed
+- Fixed FAL API Queue status/result URLs for all ElevenLabs models (Text To Dialogue, TTS V3, Turbo v2.5, Multilingual v2, Audio Isolation, Sound Effects V2) - Now correctly uses `/fal-ai/elevenlabs/requests/{requestId}/status` and `/fal-ai/elevenlabs/requests/{requestId}` instead of model-specific paths, resolving 405 Method Not Allowed errors
+- Added `audio` field to async result detection so ElevenLabs audio responses are correctly recognized when polling completes
+
 ## [0.1.40] - 2025-01-XX
 
 ### Fixed
